@@ -1,0 +1,5 @@
+#! /bin/bash
+sudo /sbin/ip link set can0 down
+sudo /sbin/ip link set can1 down
+
+
