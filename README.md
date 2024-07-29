@@ -16,7 +16,7 @@ The communication between the PC and the motor control modules is achieved via C
 # Folder/File Structure 
 
 Relevant files after fullfilling (hardware) prerequisites (coming soon).
-
+```
 ├── /FE-DPECc-CAN/files                  
 │   ├── /CAN_traffic                     (CAN initiation and traffic on bus in command promt)
 │   │   ├── candown                      (disable CAN bus)
@@ -35,3 +35,4 @@ Relevant files after fullfilling (hardware) prerequisites (coming soon).
 │   │   ├── fedpecc.config               (bus parameter for network)
 │   │   ├── fedpecc.py                   (acutal code to run the gui and operate with motors (after canup initialisation))
 │   ├── Erklärungen_Mai24.txt            (Descriptions for changes in files in may)
+```
