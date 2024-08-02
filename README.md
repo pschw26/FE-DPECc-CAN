@@ -46,7 +46,6 @@ Relevant files after fullfilling (hardware) prerequisites (coming soon).
 │   │   │   │   ├── start_app_save_test.py              (acutal code to run the gui for this test)
 │   │   │   │   ├── test_positions                      (Matrix holding position values: index i is position, j is motor)
 │   │   │   │   ├── backup_positions                    (Matrix holding position values: index i is position, j is motor)
-│   │   │   ├── save_position                           (test for save, load and store functions)
 │   │   ├── fedpecc.config                              (bus parameter for network)
 │   │   ├── fedpecc.py                                  (acutal code to run the gui and operate with motors (after canup initialisation))
 │   │   ├── TODO.txt                                    (recent errors and resolved ones)
