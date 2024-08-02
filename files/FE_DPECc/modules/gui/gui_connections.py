@@ -33,7 +33,7 @@ from modules.motor  import AllMotors, MotorGroup
 
 ### Configuration, Initialization of all motors
 
-conf = Config('fedpecc.config')
+conf = Config('C:/Daten/Peter/Studium/A_Programme_Hiwi/Projekte/FE-DPECc-CAN/files/FE_DPECc/fedpecc.config/fedpecc.config')
 bus  = CanBus(conf.bus_params)
 net  = bus.connect()
 
