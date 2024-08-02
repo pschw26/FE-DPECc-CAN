@@ -14,7 +14,6 @@ Adapted to CAN bus on Mai 7 2024 by Eric Reusser
         - added connections for set_0 for legs and x (commented, see TODO)
         - added connections for halt (commented, see TODO)
         - changed print statement to "terminal" output in gui'''
-    
 
 import sys, time, threading
 
@@ -22,18 +21,33 @@ from PyQt5.QtWidgets import QMainWindow, QApplication
 from PyQt5.QtGui import QKeyEvent, QFont
 from PyQt5.QtCore import Qt
 from modules.gui.main_window_ui import Ui_MainWindow
+import os 
+
 
 # import package for external file management 
-#import pandas as pd 
+#import pandas as pd
+
+'''for relative imports '''
+# get current dir of this file 
+current_dir = os.path.dirname(os.path.abspath(__file__))
+# get dir of folder one step higher in hirarchy: modules 
+modules_dir = os.path.dirname(current_dir)
+# get dir of two folders higher in hirarchy: FE-DPECc
+fedpecc_dir = os.path.dirname(modules_dir)
+# append paths to pathsearch 
+sys.path.append(modules_dir)
+sys.path.append(fedpecc_dir)
+
+# relative path of config file 
+config_path = os.path.join(fedpecc_dir, 'fedpecc.config') 
 
 from modules.config import Config
 from modules.canbus import CanBus
 from modules.motor  import AllMotors, MotorGroup
 
-
 ### Configuration, Initialization of all motors
 
-conf = Config('C:/Daten/Peter/Studium/A_Programme_Hiwi/Projekte/FE-DPECc-CAN/files/FE_DPECc/fedpecc.config/fedpecc.config')
+conf = Config(config_path)
 bus  = CanBus(conf.bus_params)
 net  = bus.connect()
 
