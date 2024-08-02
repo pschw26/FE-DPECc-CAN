@@ -29,7 +29,7 @@ from PyQt5.QtCore import Qt
 import sys
 import time 
 
-from config import Config
+from modules.config import Config
 
 # import pandas as pd 
 
@@ -45,7 +45,7 @@ class Window(QMainWindow, Ui_MainWindow):
         self.connect()
     
     def setup(self):
-        self.conf = Config('fedpecc.config')
+        self.conf = Config('C:/Daten/Peter/Studium/A_Programme_Hiwi/Projekte/FE-DPECc-CAN/files/FE_DPECc/fedpecc.config')
         # print(conf.motor_params[5]['pitch']) #mm/rotation val for motor 5
         self.t_0 = time.time()
         self.overflow = False
