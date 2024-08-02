@@ -11,14 +11,14 @@ Created on Mon Jul  1 18:32:36 2024
     - add min max values for set value in config file for each motor 
     - set min max for spinB accordingly 
     - check bug: radiobutton for keyboard control has to be pressed last:
-                 maybe not clicked outside of the box?
+                  maybe not clicked outside of the box?
     - make connections ready esp. for set to value
 
     Done:
     - Cap frequency of keyboard commands 
     - define map for unit conversion for pos: f(value_spinBox,
-                                   internal to physical unit conversion
-                                   from config file)'''
+                                    internal to physical unit conversion
+                                    from config file)'''
 
 
 
@@ -28,6 +28,22 @@ from PyQt5.QtGui import QKeyEvent
 from PyQt5.QtCore import Qt
 import sys
 import time 
+import os 
+
+'''for relative imports '''
+# get current dir of this file 
+current_dir = os.path.dirname(os.path.abspath(__file__))
+# get dir of folder one step higher in hirarchy: test 
+test_dir = os.path.dirname(current_dir)
+# get dir of two folders higher in hirarchy: FE-DPECc
+fedpecc_dir = os.path.dirname(test_dir)
+# append paths to pathsearch 
+sys.path.append(test_dir)
+sys.path.append(fedpecc_dir)
+
+# relative path of config file 
+config_path = os.path.join(fedpecc_dir, 'fedpecc.config')
+
 
 from modules.config import Config
 
@@ -45,7 +61,7 @@ class Window(QMainWindow, Ui_MainWindow):
         self.connect()
     
     def setup(self):
-        self.conf = Config('C:/Daten/Peter/Studium/A_Programme_Hiwi/Projekte/FE-DPECc-CAN/files/FE_DPECc/fedpecc.config')
+        self.conf = Config(config_path)
         # print(conf.motor_params[5]['pitch']) #mm/rotation val for motor 5
         self.t_0 = time.time()
         self.overflow = False

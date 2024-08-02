@@ -1,0 +1,9 @@
+### TODO-list ###
+
+- find reason for Problems with reading the .config file 
+- get new code Version of gui, to have save, load positions 
+- resolve Errors:
+	- radiobutton for Keyboard Control has to be checked again if stepsize of Keyboard Control is changed 
+	- implement new set to value function 
+- resolved recently:
+	- cap frequence for Keyboard commands to Prevent Overflow 
