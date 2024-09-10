@@ -14,6 +14,7 @@ Adapted to CAN bus on Mai 7 2024 by Eric Reusser
         - added connections for set_0 for legs and x (commented, see TODO)
         - added connections for halt (commented, see TODO)
         - changed print statement to "terminal" output in gui'''
+    
 
 import sys, time, threading
 
@@ -21,33 +22,18 @@ from PyQt5.QtWidgets import QMainWindow, QApplication
 from PyQt5.QtGui import QKeyEvent, QFont
 from PyQt5.QtCore import Qt
 from modules.gui.main_window_ui import Ui_MainWindow
-import os 
-
 
 # import package for external file management 
-#import pandas as pd
-
-'''for relative imports '''
-# get current dir of this file 
-current_dir = os.path.dirname(os.path.abspath(__file__))
-# get dir of folder one step higher in hirarchy: modules 
-modules_dir = os.path.dirname(current_dir)
-# get dir of two folders higher in hirarchy: FE-DPECc
-fedpecc_dir = os.path.dirname(modules_dir)
-# append paths to pathsearch 
-sys.path.append(modules_dir)
-sys.path.append(fedpecc_dir)
-
-# relative path of config file 
-config_path = os.path.join(fedpecc_dir, 'fedpecc.config') 
+import pandas as pd 
 
 from modules.config import Config
 from modules.canbus import CanBus
 from modules.motor  import AllMotors, MotorGroup
 
+
 ### Configuration, Initialization of all motors
 
-conf = Config(config_path)
+conf = Config('fedpecc.config')
 bus  = CanBus(conf.bus_params)
 net  = bus.connect()
 
@@ -76,7 +62,7 @@ abs_pos     = [0., 0., 0., 0., 0.]  # Absolute target positions:
                                     # legs, x, pr, cr, s
 
 # read position backup matrix from external file # TODO: make work 
-# backup = pd.read_csv("backup_positions", delimiter = '\t')
+backup = pd.read_csv("/home/pi2mpp/Desktop/3105_HEIDELBERG/FE_DPECc/modules/gui/backup_positions", delimiter = '\t')
 
 ### Setup GUI, handle all GUI widgets
 
@@ -156,37 +142,39 @@ class Window(QMainWindow, Ui_MainWindow):
         global speed
         velocity = motor.get_velocity_params()
         speed = velocity[0]
-        self.dspinB_speed.setValue(velocity[0])
+        print(velocity[0], velocity[1], velocity[2])
         self.dspinB_speed.setMinimum(velocity[1])
         self.dspinB_speed.setMaximum(velocity[2])
+        self.dspinB_speed.setValue(velocity[0])
         
     def set_abs_pos_params(self, idx, motor):
         pos = motor.get_abs_pos_params()
         if idx == 0:
-            self.dspinB_mm_axis_legs.setValue(pos[0])
             self.dspinB_mm_axis_legs.setMinimum(pos[1])
             self.dspinB_mm_axis_legs.setMaximum(pos[2])
             self.dspinB_mm_axis_legs.setSingleStep(pos[3])
+            self.dspinB_mm_axis_legs.setValue(pos[0])
         elif idx == 1:
-            self.dspinB_mm_axis_x.setValue(pos[0])
             self.dspinB_mm_axis_x.setMinimum(pos[1])
             self.dspinB_mm_axis_x.setMaximum(pos[2])
             self.dspinB_mm_axis_x.setSingleStep(pos[3])
+            self.dspinB_mm_axis_x.setValue(pos[0])
         elif idx == 2:
-            self.dspinB_deg_axis_pr.setValue(pos[0])
             self.dspinB_deg_axis_pr.setMinimum(pos[1])
             self.dspinB_deg_axis_pr.setMaximum(pos[2])
             self.dspinB_deg_axis_pr.setSingleStep(pos[3])
+            self.dspinB_deg_axis_pr.setValue(pos[0])
         elif idx == 3:
-            self.dspinB_deg_axis_cr.setValue(pos[0])
             self.dspinB_deg_axis_cr.setMinimum(pos[1])
             self.dspinB_deg_axis_cr.setMaximum(pos[2])
             self.dspinB_deg_axis_cr.setSingleStep(pos[3])
+            self.dspinB_deg_axis_cr.setValue(pos[0])
         elif idx == 4:
-            self.dspinB_mm_axis_s.setValue(pos[0])
             self.dspinB_mm_axis_s.setMinimum(pos[1])
             self.dspinB_mm_axis_s.setMaximum(pos[2])
             self.dspinB_mm_axis_s.setSingleStep(pos[3])
+            self.dspinB_mm_axis_s.setValue(pos[0])
+
 
     def setup_default_buttons(self):
         self.radioB_permanent_when_pushed.setChecked(True)
@@ -381,13 +369,21 @@ class Window(QMainWindow, Ui_MainWindow):
         position = all_motors.get_position()
         print("Position: ", position)
         QApplication.processEvents()
-        for i in range(8):
+        # override current position of active motor (active tab)
+        idx_list = []
+        if motor_group:
+            idx_list = [0, 1, 2, 3]
+        if motor:
+            idx_list = [motor_list.index(motor)]
+        for i in idx_list:
             self.lcd_val[i][0] = position[i]
             self.lcd_matrix[i][0].display(position[i])
         ## Save positions to file
-        if save:
-            # TODO
-            pass
+        if save: # TODO yields: segmentation fault due to termial display issues
+            for i in range(8):
+                backup.iloc[i] = self.lcd_val[i]
+            backup.to_csv('/home/pi2mpp/Desktop/3105_HEIDELBERG/FE_DPECc/modules/gui/backup_positions', sep='\t', index= False)
+            # self.terminal.appendPlainText('conducted position backup to file!')
             
     ###   CHECKABILITY   ###
  
@@ -521,6 +517,7 @@ class Window(QMainWindow, Ui_MainWindow):
             label.setStyleSheet('color: red')
         cnt = 0
         if motor:
+            print("Thread started")
             while motor.is_rotating():
                 time.sleep(heartbeat)
                 cnt += 1
@@ -555,7 +552,7 @@ class Window(QMainWindow, Ui_MainWindow):
         mode = True
         if speed < 0.:
             speed = -speed
-        if motor_group:
+        if motor_group and motor_group.is_active():
             if self.motor_group_is_ready("Movement disabled"):
                 if pos_idx == 0:
                     position = 0.
@@ -608,7 +605,7 @@ class Window(QMainWindow, Ui_MainWindow):
         global abs_pos, speed, mode
         mode = True
         if index == 0:
-            if motor_group:
+            if motor_group and motor_group.is_active():
                 if self.motor_group_is_ready("Movement disabled"):
                     motor_group.move_position(abs_pos[0], speed)
                     threading.Thread(target = self.wait_end_rotation).start()
@@ -679,7 +676,7 @@ class Window(QMainWindow, Ui_MainWindow):
         for label in self.active_label_list:    
             label.setStyleSheet('color: yellow')
         if not mode:
-            if motor:
+            if motor and motor.is_active():
                 motor.move_stop()
                 threading.Thread(target = self.wait_end_rotation).start()
         print("Rotation is ending")
@@ -705,7 +702,7 @@ class Window(QMainWindow, Ui_MainWindow):
     def change_velocity(self):
         global motor, speed, direction
         speed = self.dspinB_speed.value()
-        if motor:
+        if motor and motor.is_active():
             if motor.is_rotating():
                 if mode:
                     motor.change_velocity(speed)
@@ -714,28 +711,30 @@ class Window(QMainWindow, Ui_MainWindow):
                         motor.change_velocity(speed)
                     else:
                         motor.change_velocity(-speed)
-        elif motor_group:
+        elif motor_group and motor_group.is_active():
             if motor_group.is_rotating():
                 motor_group.change_velocity(speed)
 
     ###   SAVE AND LOAD POSITIONS   ###
     
-    def save_pos(self):             # TODO
-        print("Save positions")
+    def save_pos(self):           
         # save all positions for all to file 
-        #positions = self.motor_pos_matrix
-        #positions.to_csv('test_positions', sep='\t', index=False)
-        # print('saved positions of all motors to file!')
-        #self.terminal.appendPlainText('saved positions of all motors to file!')
+        positions = pd.DataFrame(self.lcd_val)
+        positions.to_csv('/home/pi2mpp/Desktop/3105_HEIDELBERG/FE_DPECc/modules/gui/saved_positions', sep='\t', index=False)
+        self.terminal.appendPlainText('saved positions of all motors to file!')
     
-    def load_pos(self):             # TODO
-        print("Load poaitions")
-        # load positions from file and override motor_pos_matrix with values, then refresh lcd's
-        #positions = pd.read_csv("test_positions", delimiter = '\t')
-        #self.motor_pos_matrix = positions 
-        # print('loaded all positions from file!')
-        #self.terminal.appendPlainText('loaded all positions from file!')
-        #self.refresh_lcd([(i, j) for i in set(range(1,len(motor_list))) for j in set(range(1, 6))])
+    def load_pos(self):             
+        # load positions from file, then refresh lcd's
+        positions = pd.read_csv('/home/pi2mpp/Desktop/3105_HEIDELBERG/FE_DPECc/modules/gui/saved_positions', delimiter = '\t')
+        for i in range(8):
+            for j in range(6):
+                self.lcd_val[i][j] = positions.iloc[i][j]
+                try: 
+                    self.lcd_matrix[i][j].display(self.lcd_val[i][j]) 
+                except AttributeError:
+                    pass
+        self.terminal.appendPlainText('loaded all positions from file!')
+       
     
     # def save_pos(self):
     #     '''Save stored module positions (displayed in lcd_matrix) to external file.'''
