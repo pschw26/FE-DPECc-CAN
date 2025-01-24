@@ -1,0 +1,316 @@
+>>> %Run fedpecc.py
+Configuration processed
+CAN bus: Connected to can0, bitrate = 1000000 
+
+Motor ZBR assigned to node 1 added to network
+Motor ZBR is active
+Motor ZBR: SDO parameters configured
+Motor ZBR: PDO channels configured
+Motor ZBR: Callback functions added
+
+Motor ZBC assigned to node 2 added to network
+Motor ZBC is active
+Motor ZBC: SDO parameters configured
+Motor ZBC: PDO channels configured
+Motor ZBC: Callback functions added
+
+Motor ZDR assigned to node 3 added to network
+Motor ZDR is active
+Motor ZDR: SDO parameters configured
+Motor ZDR: PDO channels configured
+Motor ZDR: Callback functions added
+
+Motor ZDC assigned to node 4 added to network
+Motor ZDC is active
+Motor ZDC: SDO parameters configured
+Motor ZDC: PDO channels configured
+Motor ZDC: Callback functions added
+
+Motor X assigned to node 5 added to network
+Motor X is active
+Motor X: SDO parameters configured
+Motor X: PDO channels configured
+Motor X: Callback functions added
+
+Motor PR assigned to node 6 added to network
+Motor PR is active
+Motor PR: SDO parameters configured
+Motor PR: PDO channels configured
+Motor PR: Callback functions added
+
+Motor CR assigned to node 7 added to network
+Motor CR is active
+Motor CR: SDO parameters configured
+Motor CR: PDO channels configured
+Motor CR: Callback functions added
+
+Motor S assigned to node 8 added to network
+Transfer aborted by client with code 0x05040000
+Motor S is inactive!
+Motor P assigned to node 9 added to network
+Transfer aborted by client with code 0x05040000
+Motor P is inactive!
+All motors INITIALIZED
+Motor group contains 4 active motors
+All motors OPERATIONAL
+Motor group: Position mode
+Thread started
+Mismatch between expected and actual data size
+Position:  [-0.57439453125, -0.573779296875, -0.5739453125, -0.57302734375, 0.0, 0.0, 0.0, 0.0, 0.0]
+Mismatch between expected and actual data size
+Position:  [-1.197001953125, -1.196962890625, -1.19712890625, -1.196220703125, 0.0, 0.0, 0.0, 0.0, 0.0]
+Mismatch between expected and actual data size
+Position:  [-1.8196484375, -1.819599609375, -1.81921875, -1.8188671875, 0.0, 0.0, 0.0, 0.0, 0.0]
+Mismatch between expected and actual data size
+Position:  [-2.441181640625, -2.4405859375, -2.440791015625, -2.439892578125, 0.0, 0.0, 0.0, 0.0, 0.0]
+Mismatch between expected and actual data size
+Position:  [-3.0621875, -3.06216796875, -3.06232421875, -3.06142578125, 0.0, 0.0, 0.0, 0.0, 0.0]
+Mismatch between expected and actual data size
+Position:  [-3.6831640625, -3.6831640625, -3.682802734375, -3.682470703125, 0.0, 0.0, 0.0, 0.0, 0.0]
+Mismatch between expected and actual data size
+Position:  [-4.305830078125, -4.30580078125, -4.305439453125, -4.305068359375, 0.0, 0.0, 0.0, 0.0, 0.0]
+Motor group: HALT
+Mismatch between expected and actual data size
+Position:  [-4.446669921875, -4.446650390625, -4.446591796875, -4.4461328125, 0.0, 0.0, 0.0, 0.0, 0.0]
+Mismatch between expected and actual data size
+Thread started
+Mismatch between expected and actual data size
+Position:  [-4.446669921875, -4.446650390625, -4.446591796875, -4.4461328125, 0.0, 0.0, 0.0, 0.0, 0.0]
+Motor group: Position mode
+Thread started
+Mismatch between expected and actual data size
+Position:  [-3.875234375, -3.87521484375, -3.875322265625, -3.87541015625, 0.0, 0.0, 0.0, 0.0, 0.0]
+Mismatch between expected and actual data size
+Position:  [-3.25376953125, -3.254287109375, -3.254423828125, -3.25451171875, 0.0, 0.0, 0.0, 0.0, 0.0]
+Mismatch between expected and actual data size
+Position:  [-2.633408203125, -2.633388671875, -2.633486328125, -2.633583984375, 0.0, 0.0, 0.0, 0.0, 0.0]
+Mismatch between expected and actual data size
+Position:  [-2.0124609375, -2.012470703125, -2.012578125, -2.012685546875, 0.0, 0.0, 0.0, 0.0, 0.0]
+Mismatch between expected and actual data size
+Position:  [-1.391015625, -1.391552734375, -1.391669921875, -1.39177734375, 0.0, 0.0, 0.0, 0.0, 0.0]
+Mismatch between expected and actual data size
+Position:  [-0.7706640625, -0.77064453125, -0.77072265625, -0.770830078125, 0.0, 0.0, 0.0, 0.0, 0.0]
+Mismatch between expected and actual data size
+Position:  [-0.14970703125, -0.14974609375, -0.14982421875, -0.149921875, 0.0, 0.0, 0.0, 0.0, 0.0]
+Mismatch between expected and actual data size
+Position:  [0.471201171875, 0.47119140625, 0.470537109375, 0.470419921875, 0.0, 0.0, 0.0, 0.0, 0.0]
+Mismatch between expected and actual data size
+Position:  [1.092685546875, 1.09265625, 1.0925390625, 1.092451171875, 0.0, 0.0, 0.0, 0.0, 0.0]
+Mismatch between expected and actual data size
+Position:  [1.71359375, 1.713056640625, 1.71291015625, 1.712802734375, 0.0, 0.0, 0.0, 0.0, 0.0]
+Mismatch between expected and actual data size
+Position:  [2.0, 2.0, 2.0, 2.0, 0.0, 0.0, 0.0, 0.0, 0.0]
+Mismatch between expected and actual data size
+Position:  [2.0, 2.0, 2.0, 2.0, 0.0, 0.0, 0.0, 0.0, 0.0]
+Motor group: Position mode
+Thread started
+Mismatch between expected and actual data size
+Position:  [2.57255859375, 2.57208984375, 2.571962890625, 2.57197265625, 0.0, 0.0, 0.0, 0.0, 0.0]
+Mismatch between expected and actual data size
+Position:  [3.1951171875, 3.195185546875, 3.19501953125, 3.195048828125, 0.0, 0.0, 0.0, 0.0, 0.0]
+Mismatch between expected and actual data size
+Position:  [3.81654296875, 3.816083984375, 3.81650390625, 3.815966796875, 0.0, 0.0, 0.0, 0.0, 0.0]
+Mismatch between expected and actual data size
+Position:  [4.43748046875, 4.43755859375, 4.43740234375, 4.43744140625, 0.0, 0.0, 0.0, 0.0, 0.0]
+Motor group: HALT
+Mismatch between expected and actual data size
+Mismatch between expected and actual data size
+Thread started
+Position:  [4.920654296875, 4.920498046875, 4.920595703125, 4.920625, 0.0, 0.0, 0.0, 0.0, 0.0]
+Mismatch between expected and actual data size
+Mismatch between expected and actual data size
+Position:  [4.920654296875, 4.920498046875, 4.920595703125, 4.920625, 0.0, 0.0, 0.0, 0.0, 0.0]
+Position:  [4.9205859375, 4.9205859375, 4.9205859375, 4.9205859375, 0.0, 0.0, 0.0, 0.0, 0.0]
+Motor group: Position mode
+Thread started
+Mismatch between expected and actual data size
+Position:  [5.492607421875, 5.4922265625, 5.492255859375, 5.491884765625, 0.0, 0.0, 0.0, 0.0, 0.0]
+Mismatch between expected and actual data size
+Position:  [6.114072265625, 6.113720703125, 6.11369140625, 6.113310546875, 0.0, 0.0, 0.0, 0.0, 0.0]
+Mismatch between expected and actual data size
+Position:  [6.73498046875, 6.73517578125, 6.735166015625, 6.734794921875, 0.0, 0.0, 0.0, 0.0, 0.0]
+Mismatch between expected and actual data size
+Position:  [7.3558984375, 7.355537109375, 7.355537109375, 7.355712890625, 0.0, 0.0, 0.0, 0.0, 0.0]
+Mismatch between expected and actual data size
+Position:  [7.98009765625, 7.979736328125, 7.979716796875, 7.979345703125, 0.0, 0.0, 0.0, 0.0, 0.0]
+Mismatch between expected and actual data size
+Position:  [8.0, 8.0, 8.0, 8.0, 0.0, 0.0, 0.0, 0.0, 0.0]
+Motor group: Position mode
+Thread started
+Mismatch between expected and actual data size
+Position:  [8.572734375, 8.57267578125, 8.572509765625, 8.572646484375, 0.0, 0.0, 0.0, 0.0, 0.0]
+Mismatch between expected and actual data size
+Position:  [9.193671875, 9.193583984375, 9.1933984375, 9.192998046875, 0.0, 0.0, 0.0, 0.0, 0.0]
+Mismatch between expected and actual data size
+Position:  [9.814560546875, 9.814521484375, 9.81431640625, 9.813896484375, 0.0, 0.0, 0.0, 0.0, 0.0]
+Mismatch between expected and actual data size
+Position:  [10.434921875, 10.434892578125, 10.434697265625, 10.43482421875, 0.0, 0.0, 0.0, 0.0, 0.0]
+Mismatch between expected and actual data size
+Position:  [11.05962890625, 11.05908203125, 11.05943359375, 11.0590234375, 0.0, 0.0, 0.0, 0.0, 0.0]
+Mismatch between expected and actual data size
+Position:  [11.681103515625, 11.681103515625, 11.68087890625, 11.681015625, 0.0, 0.0, 0.0, 0.0, 0.0]
+Mismatch between expected and actual data size
+Position:  [12.3030859375, 12.3030859375, 12.30287109375, 12.30248046875, 0.0, 0.0, 0.0, 0.0, 0.0]
+Mismatch between expected and actual data size
+Position:  [12.92404296875, 12.92404296875, 12.92376953125, 12.923935546875, 0.0, 0.0, 0.0, 0.0, 0.0]
+Mismatch between expected and actual data size
+Position:  [13.5449609375, 13.54494140625, 13.544697265625, 13.544326171875, 0.0, 0.0, 0.0, 0.0, 0.0]
+Mismatch between expected and actual data size
+Position:  [14.16642578125, 14.1663671875, 14.1661328125, 14.165771484375, 0.0, 0.0, 0.0, 0.0, 0.0]
+Mismatch between expected and actual data size
+Position:  [14.78896484375, 14.788916015625, 14.78921875, 14.78888671875, 0.0, 0.0, 0.0, 0.0, 0.0]
+Mismatch between expected and actual data size
+Position:  [15.4120703125, 15.412001953125, 15.411748046875, 15.4119921875, 0.0, 0.0, 0.0, 0.0, 0.0]
+Mismatch between expected and actual data size
+Position:  [16.03353515625, 16.033447265625, 16.033203125, 16.032900390625, 0.0, 0.0, 0.0, 0.0, 0.0]
+Mismatch between expected and actual data size
+Position:  [16.65390625, 16.653828125, 16.6541015625, 16.653798828125, 0.0, 0.0, 0.0, 0.0, 0.0]
+Mismatch between expected and actual data size
+Position:  [17.2753515625, 17.275283203125, 17.2750390625, 17.274716796875, 0.0, 0.0, 0.0, 0.0, 0.0]
+Mismatch between expected and actual data size
+Position:  [17.89845703125, 17.898388671875, 17.898134765625, 17.8978125, 0.0, 0.0, 0.0, 0.0, 0.0]
+Mismatch between expected and actual data size
+Position:  [18.519384765625, 18.519296875, 18.5195703125, 18.519248046875, 0.0, 0.0, 0.0, 0.0, 0.0]
+Mismatch between expected and actual data size
+Position:  [19.14029296875, 19.140224609375, 19.139951171875, 19.139619140625, 0.0, 0.0, 0.0, 0.0, 0.0]
+Mismatch between expected and actual data size
+Position:  [19.762265625, 19.7616796875, 19.761962890625, 19.761630859375, 0.0, 0.0, 0.0, 0.0, 0.0]
+Mismatch between expected and actual data size
+Position:  [20.38375, 20.38369140625, 20.3833984375, 20.383095703125, 0.0, 0.0, 0.0, 0.0, 0.0]
+Mismatch between expected and actual data size
+Position:  [21.00630859375, 21.0062109375, 21.006484375, 21.0062109375, 0.0, 0.0, 0.0, 0.0, 0.0]
+Mismatch between expected and actual data size
+Position:  [21.62994140625, 21.629833984375, 21.630126953125, 21.62986328125, 0.0, 0.0, 0.0, 0.0, 0.0]
+Mismatch between expected and actual data size
+Position:  [22.250849609375, 22.25076171875, 22.250478515625, 22.250234375, 0.0, 0.0, 0.0, 0.0, 0.0]
+Mismatch between expected and actual data size
+Position:  [22.8717578125, 22.871650390625, 22.871962890625, 22.87171875, 0.0, 0.0, 0.0, 0.0, 0.0]
+Mismatch between expected and actual data size
+Position:  [23.493232421875, 23.49310546875, 23.492861328125, 23.49318359375, 0.0, 0.0, 0.0, 0.0, 0.0]
+Mismatch between expected and actual data size
+Position:  [24.116328125, 24.116181640625, 24.115966796875, 24.115751953125, 0.0, 0.0, 0.0, 0.0, 0.0]
+Mismatch between expected and actual data size
+Position:  [24.73724609375, 24.737109375, 24.737412109375, 24.73720703125, 0.0, 0.0, 0.0, 0.0, 0.0]
+Mismatch between expected and actual data size
+Position:  [25.35927734375, 25.3591015625, 25.35890625, 25.35869140625, 0.0, 0.0, 0.0, 0.0, 0.0]
+Mismatch between expected and actual data size
+Position:  [25.979638671875, 25.979501953125, 25.979814453125, 25.979599609375, 0.0, 0.0, 0.0, 0.0, 0.0]
+Mismatch between expected and actual data size
+Position:  [26.601630859375, 26.601494140625, 26.601826171875, 26.60162109375, 0.0, 0.0, 0.0, 0.0, 0.0]
+Mismatch between expected and actual data size
+Position:  [27.22255859375, 27.222421875, 27.2221875, 27.22197265625, 0.0, 0.0, 0.0, 0.0, 0.0]
+Mismatch between expected and actual data size
+Position:  [27.843466796875, 27.8433203125, 27.84306640625, 27.84291015625, 0.0, 0.0, 0.0, 0.0, 0.0]
+Mismatch between expected and actual data size
+Position:  [28.464931640625, 28.464765625, 28.464541015625, 28.464345703125, 0.0, 0.0, 0.0, 0.0, 0.0]
+Mismatch between expected and actual data size
+Position:  [29.086923828125, 29.086806640625, 29.0865625, 29.0863671875, 0.0, 0.0, 0.0, 0.0, 0.0]
+Mismatch between expected and actual data size
+Position:  [29.707880859375, 29.70771484375, 29.707470703125, 29.707294921875, 0.0, 0.0, 0.0, 0.0, 0.0]
+Mismatch between expected and actual data size
+Position:  [30.0, 30.0, 30.0, 30.0, 0.0, 0.0, 0.0, 0.0, 0.0]
+Mismatch between expected and actual data size
+Position:  [30.0, 30.0, 30.0, 30.0, 0.0, 0.0, 0.0, 0.0, 0.0]
+Motor group: Position mode
+Thread started
+Mismatch between expected and actual data size
+Position:  [30.571953125, 30.571767578125, 30.571552734375, 30.57138671875, 0.0, 0.0, 0.0, 0.0, 0.0]
+Motor group: Change v = 1.5
+Mismatch between expected and actual data size
+Position:  [31.964521484375, 31.96318359375, 31.96216796875, 31.96125, 0.0, 0.0, 0.0, 0.0, 0.0]
+Mismatch between expected and actual data size
+Position:  [33.82568359375, 33.82435546875, 33.82326171875, 33.822333984375, 0.0, 0.0, 0.0, 0.0, 0.0]
+Mismatch between expected and actual data size
+Position:  [35.688447265625, 35.6871484375, 35.6859765625, 35.685126953125, 0.0, 0.0, 0.0, 0.0, 0.0]
+Mismatch between expected and actual data size
+Position:  [37.55775390625, 37.556484375, 37.5553125, 37.5543359375, 0.0, 0.0, 0.0, 0.0, 0.0]
+Mismatch between expected and actual data size
+Position:  [39.420478515625, 39.41923828125, 39.418154296875, 39.418759765625, 0.0, 0.0, 0.0, 0.0, 0.0]
+Mismatch between expected and actual data size
+Position:  [41.284921875, 41.283603515625, 41.28416015625, 41.2830859375, 0.0, 0.0, 0.0, 0.0, 0.0]
+Motor group: Change v = 0.5
+Mismatch between expected and actual data size
+Position:  [43.019560546875, 43.0192578125, 43.019052734375, 43.018876953125, 0.0, 0.0, 0.0, 0.0, 0.0]
+Mismatch between expected and actual data size
+Position:  [43.641044921875, 43.640703125, 43.64052734375, 43.640869140625, 0.0, 0.0, 0.0, 0.0, 0.0]
+Mismatch between expected and actual data size
+Position:  [44.261943359375, 44.262158203125, 44.261953125, 44.261767578125, 0.0, 0.0, 0.0, 0.0, 0.0]
+Mismatch between expected and actual data size
+Position:  [44.883388671875, 44.883076171875, 44.882880859375, 44.8826953125, 0.0, 0.0, 0.0, 0.0, 0.0]
+Mismatch between expected and actual data size
+Position:  [45.503779296875, 45.504013671875, 45.503779296875, 45.503603515625, 0.0, 0.0, 0.0, 0.0, 0.0]
+Mismatch between expected and actual data size
+Position:  [46.127431640625, 46.12708984375, 46.127421875, 46.12724609375, 0.0, 0.0, 0.0, 0.0, 0.0]
+Mismatch between expected and actual data size
+Position:  [46.748349609375, 46.74802734375, 46.74779296875, 46.74759765625, 0.0, 0.0, 0.0, 0.0, 0.0]
+Mismatch between expected and actual data size
+Position:  [47.369248046875, 47.3689453125, 47.369267578125, 47.369091796875, 0.0, 0.0, 0.0, 0.0, 0.0]
+Mismatch between expected and actual data size
+Position:  [47.99072265625, 47.990419921875, 47.990166015625, 47.990009765625, 0.0, 0.0, 0.0, 0.0, 0.0]
+Mismatch between expected and actual data size
+Position:  [48.612724609375, 48.61240234375, 48.612177734375, 48.61203125, 0.0, 0.0, 0.0, 0.0, 0.0]
+Mismatch between expected and actual data size
+Position:  [49.233642578125, 49.233330078125, 49.233642578125, 49.233466796875, 0.0, 0.0, 0.0, 0.0, 0.0]
+Mismatch between expected and actual data size
+Position:  [49.857294921875, 49.856943359375, 49.85728515625, 49.857099609375, 0.0, 0.0, 0.0, 0.0, 0.0]
+Mismatch between expected and actual data size
+Position:  [50.0, 50.0, 50.0, 50.0, 0.0, 0.0, 0.0, 0.0, 0.0]
+Mismatch between expected and actual data size
+Position:  [50.0, 50.0, 50.0, 50.0, 0.0, 0.0, 0.0, 0.0, 0.0]
+Motor CR: Velocity mode
+Mismatch between expected and actual data size
+Position:  [50.0, 50.0, 50.0, 50.0, 0.0, 0.0, 0.0, 0.0, 0.0]
+Mismatch between expected and actual data size
+Position:  [50.0, 50.0, 50.0, 50.0, 0.0, 0.0, 0.0, 0.0, 0.0]
+Mismatch between expected and actual data size
+Position:  [50.0, 50.0, 50.0, 50.0, 0.0, 0.0, 0.0, 0.0, 0.0]
+Rotation is ending
+Mismatch between expected and actual data size
+Position:  [50.0, 50.0, 50.0, 50.0, 0.0, 0.0, 0.0, 0.0, 0.0]
+Mismatch between expected and actual data size
+Position:  [50.0, 50.0, 50.0, 50.0, 0.0, 0.0, 0.0, 0.0, 0.0]
+Mismatch between expected and actual data size
+Position:  [50.0, 50.0, 50.0, 50.0, 0.0, 0.0, 0.0, 0.0, 0.0]
+Mismatch between expected and actual data size
+Position:  [50.0, 50.0, 50.0, 50.0, 0.0, 0.0, 0.0, 0.0, 0.0]
+Mismatch between expected and actual data size
+Position:  [50.0, 50.0, 50.0, 50.0, 0.0, 0.0, 0.0, 0.0, 0.0]
+Mismatch between expected and actual data size
+Position:  [50.0, 50.0, 50.0, 50.0, 0.0, 0.0, 0.0, 0.0, 0.0]
+Mismatch between expected and actual data size
+Position:  [50.0, 50.0, 50.0, 50.0, 0.0, 0.0, 0.0, 0.0, 0.0]
+Mismatch between expected and actual data size
+Position:  [50.0, 50.0, 50.0, 50.0, 0.0, 0.0, 0.0, 0.0, 0.0]
+Mismatch between expected and actual data size
+Position:  [50.0, 50.0, 50.0, 50.0, 0.0, 0.0, 0.0, 0.0, 0.0]
+Mismatch between expected and actual data size
+Position:  [50.0, 50.0, 50.0, 50.0, 0.0, 0.0, 0.0, 0.0, 0.0]
+Motor CR: Velocity mode
+Traceback (most recent call last):
+  File "/home/pi2mpp/Desktop/2705_HEIDELBERG/FE_DPECc/modules/gui/gui_connections.py", line 679, in permanent_right
+    motor.move_velocity(speed)
+  File "/home/pi2mpp/Desktop/2705_HEIDELBERG/FE_DPECc/modules/motor.py", line 109, in move_velocity
+    self.move_velocity_internal(v)
+  File "/home/pi2mpp/Desktop/2705_HEIDELBERG/FE_DPECc/modules/canbus.py", line 239, in move_velocity_internal
+    self.node.sdo['Modes of Operation 1'].raw = 3
+    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/pi2mpp/.local/lib/python3.11/site-packages/canopen/variable.py", line 89, in raw
+    self.data = self.od.encode_raw(value)
+    ^^^^^^^^^
+  File "/home/pi2mpp/.local/lib/python3.11/site-packages/canopen/variable.py", line 41, in data
+    self.set_data(data)
+  File "/home/pi2mpp/.local/lib/python3.11/site-packages/canopen/sdo/base.py", line 133, in set_data
+    self.sdo_node.download(self.od.index, self.od.subindex, data, force_segment)
+  File "/home/pi2mpp/.local/lib/python3.11/site-packages/canopen/sdo/client.py", line 158, in download
+    with self.open(index, subindex, "wb", buffering=7, size=len(data),
+  File "/home/pi2mpp/.local/lib/python3.11/site-packages/canopen/sdo/client.py", line 388, in write
+    response = self.sdo_client.request_response(request)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/pi2mpp/.local/lib/python3.11/site-packages/canopen/sdo/client.py", line 84, in request_response
+    return self.read_response()
+           ^^^^^^^^^^^^^^^^^^^^
+  File "/home/pi2mpp/.local/lib/python3.11/site-packages/canopen/sdo/client.py", line 72, in read_response
+    raise SdoAbortedError(abort_code)
+canopen.sdo.exceptions.SdoAbortedError: Code 0x06090030, Value range of parameter exceeded
+
+Process ended with exit code -6.
