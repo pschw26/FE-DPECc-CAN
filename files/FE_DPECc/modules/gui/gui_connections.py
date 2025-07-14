@@ -80,7 +80,7 @@ class Window(QMainWindow, Ui_MainWindow):
 
         self.active_label_list = []
         # Values of positions in LCD display: shadow variable
-        self.lcd_val = [[0. for k in range(6)] for i in range(8)]
+        self.lcd_val = [[0. for k in range(6)] for i in range(9)]
 
         self.setupUi(self)
         self.setWindowTitle('FE_DPECc_GUI')
@@ -114,7 +114,7 @@ class Window(QMainWindow, Ui_MainWindow):
         self.legs_radioBlist = [self.radioB_all_motors, self.radioB_single_motor]
         # list of all labels:
         self.label_list = [self.label_zbr, self.label_zbc, self.label_zdr, self.label_zdc,
-                           self.label_x, self.label_pr, self.label_cr, self.label_s]
+                           self.label_x, self.label_pr, self.label_cr, self.label_s, self.label_oil] # TODO: added oil label
         # list of all LCD`s:
         self.lcd_matrix =  [[self.lcd_current_zbr, self.lcd_beam_zbr,   self.lcd_transport_zbr, 0, 0, 0],
                             [self.lcd_current_zbc, self.lcd_beam_zbc,   self.lcd_transport_zbc, 0, 0, 0],
@@ -125,7 +125,7 @@ class Window(QMainWindow, Ui_MainWindow):
                             [self.lcd_current_cr,  self.lcd_ion_cr,     self.lcd_raman_cr, self.lcd_3_cr,
                              self.lcd_4_cr,        self.lcd_5_cr,       self.lcd_6_cr],
                             [self.lcd_current_s,   self.lcd_1_s,        self.lcd_2_s,      self.lcd_3_s,
-                             self.lcd_4_s,         self.lcd_cal_1_s,    self.lcd_cal_2_s]]
+                             self.lcd_4_s,         self.lcd_cal_1_s,    self.lcd_cal_2_s]] #TODO: add names of lcds for pressure
         # create motor_pos_matrix as df to facilitate the interaction with the positions/backup df
         # holds all the positions of the motors 
         #self.motor_pos_matrix = pd.DataFrame()
@@ -362,7 +362,10 @@ class Window(QMainWindow, Ui_MainWindow):
             elif motor.name == 'S':
                 self.lcd_val[7][pos_idx] = self.lcd_val[7][0]
                 self.lcd_matrix[7][pos_idx].display(self.lcd_val[7][0])
-
+            elif motor.name == 'Oil':
+                self.lcd_val[8][pos_idx] = self.lcd_val[8][0]
+                self.lcd_matrix[8][pos_idx].display(self.lcd_val[8][0])
+                
     def refresh_lcd_displays(self, save):
         '''Update the status LCDs.'''
         global all_motors
@@ -380,7 +383,7 @@ class Window(QMainWindow, Ui_MainWindow):
             self.lcd_matrix[i][0].display(position[i])
         ## Save positions to file
         if save: # TODO yields: segmentation fault due to termial display issues
-            for i in range(8):
+            for i in range(9):
                 backup.iloc[i] = self.lcd_val[i]
             backup.to_csv('/home/pi2mpp/Desktop/3105_HEIDELBERG/FE_DPECc/modules/gui/backup_positions', sep='\t', index= False)
             # self.terminal.appendPlainText('conducted position backup to file!')
@@ -503,6 +506,7 @@ class Window(QMainWindow, Ui_MainWindow):
         if select == 6:
             motor = motor_list[8]
             motor_group = None
+            self.active_label_list = [self.label_oil]
             self.set_speed_params(motor)
             self.terminal.appendPlainText('Motor Pressure selected')
         for label in self.active_label_list:
@@ -726,7 +730,7 @@ class Window(QMainWindow, Ui_MainWindow):
     def load_pos(self):             
         # load positions from file, then refresh lcd's
         positions = pd.read_csv('/home/pi2mpp/Desktop/3105_HEIDELBERG/FE_DPECc/modules/gui/saved_positions', delimiter = '\t')
-        for i in range(8):
+        for i in range(9):
             for j in range(6):
                 self.lcd_val[i][j] = positions.iloc[i][j]
                 try: 
