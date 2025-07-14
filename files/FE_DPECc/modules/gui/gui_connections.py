@@ -362,6 +362,11 @@ class Window(QMainWindow, Ui_MainWindow):
             elif motor.name == 'S':
                 self.lcd_val[7][pos_idx] = self.lcd_val[7][0]
                 self.lcd_matrix[7][pos_idx].display(self.lcd_val[7][0])
+            # elif motor.name == 'Oil':
+            #     self.lcd_val[8][pos_idx] = self.lcd_val[8][0]
+            #     self.lcd_matrix[8][pos_idx].display(self.lcd_val[8][0])
+
+
 
     def refresh_lcd_displays(self, save):
         '''Update the status LCDs.'''
@@ -502,7 +507,8 @@ class Window(QMainWindow, Ui_MainWindow):
             self.terminal.appendPlainText('Motor S selected')
         if select == 6:
             motor = motor_list[8]
-            motor_group = None
+            motor_group = None 
+            # self.active_label_list = [self.label_oil]
             self.set_speed_params(motor)
             self.terminal.appendPlainText('Motor Pressure selected')
         for label in self.active_label_list:
@@ -679,6 +685,7 @@ class Window(QMainWindow, Ui_MainWindow):
             if motor and motor.is_active():
                 motor.move_stop()
                 threading.Thread(target = self.wait_end_rotation).start()
+                print(f"STOP requested for active motor: {motor.name}")     #TODO: added print statement, see if works
         print("Rotation is ending")
 
     def permanent_right(self):
