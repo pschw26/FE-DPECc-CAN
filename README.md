@@ -2,7 +2,7 @@
 
 Fast Exchange Diamond Paris-Edinbourgh Cell control (based on CANopen protocol)
 
-Written by Peter Schwörer (Universität Heidelberg), Eric Reusser (ETH-Zürich) and Philip Groß, 2023/2024
+Written by Eric Reusser (ETH-Zürich), Philip Groß, Peter Schwörer (Universität Heidelberg) 2023/2024
 
 This repositiory is the adaptation from the former version, working with USB-connection, to CAN using the CANopen protocoll.
 The CAN functionality is designed for use with Linux-based system software.
