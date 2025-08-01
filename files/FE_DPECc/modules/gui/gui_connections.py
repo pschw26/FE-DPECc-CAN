@@ -14,13 +14,18 @@ Adapted to CAN bus on Mai 7 2024 by Eric Reusser
         - added connections for set_0 for legs and x (commented, see TODO)
         - added connections for halt (commented, see TODO)
         - changed print statement to "terminal" output in gui'''
+        
+        
+"""Q: 
+    - is position control for P-motor even necessary since value for operation 
+    (lcd or abs pos), depends solely on sensor val?"""
     
 
 import sys, time, threading
 
 from PyQt5.QtWidgets import QMainWindow, QApplication
 from PyQt5.QtGui import QKeyEvent, QFont
-from PyQt5.QtCore import Qt
+from PyQt5.QtCore import Qt, pyqtSignal
 from modules.gui.main_window_ui import Ui_MainWindow
 
 # import package for external file management 
@@ -80,7 +85,7 @@ class Window(QMainWindow, Ui_MainWindow):
 
         self.active_label_list = []
         # Values of positions in LCD display: shadow variable
-        self.lcd_val = [[0. for k in range(6)] for i in range(8)]
+        self.lcd_val = [[0. for j in range(8)] for i in range(8)]
 
         self.setupUi(self)
         self.setWindowTitle('FE_DPECc_GUI')
@@ -116,16 +121,16 @@ class Window(QMainWindow, Ui_MainWindow):
         self.label_list = [self.label_zbr, self.label_zbc, self.label_zdr, self.label_zdc,
                            self.label_x, self.label_pr, self.label_cr, self.label_s]
         # list of all LCD`s:
-        self.lcd_matrix =  [[self.lcd_current_zbr, self.lcd_beam_zbr,   self.lcd_transport_zbr, 0, 0, 0],
-                            [self.lcd_current_zbc, self.lcd_beam_zbc,   self.lcd_transport_zbc, 0, 0, 0],
-                            [self.lcd_current_zdr, self.lcd_beam_zdr,   self.lcd_transport_zdr, 0, 0, 0],
-                            [self.lcd_current_zdc, self.lcd_beam_zdc,   self.lcd_transport_zdc, 0, 0, 0],
-                            [self.lcd_current_x,   self.lcd_working_x,  self.lcd_test_x,        0, 0, 0],
-                            [self.lcd_current_pr,  self.lcd_working_pr, self.lcd_test_pr,       0, 0, 0],
+        self.lcd_matrix =  [[self.lcd_current_zbr, self.lcd_beam_zbr,   self.lcd_transport_zbr, 0, 0, 0, 0, 0],
+                            [self.lcd_current_zbc, self.lcd_beam_zbc,   self.lcd_transport_zbc, 0, 0, 0, 0, 0],
+                            [self.lcd_current_zdr, self.lcd_beam_zdr,   self.lcd_transport_zdr, 0, 0, 0, 0, 0],
+                            [self.lcd_current_zdc, self.lcd_beam_zdc,   self.lcd_transport_zdc, 0, 0, 0, 0, 0],
+                            [self.lcd_current_x,   self.lcd_working_x,  self.lcd_test_x,        0, 0, 0, 0, 0],
+                            [self.lcd_current_pr,  self.lcd_working_pr, self.lcd_test_pr,       0, 0, 0, 0, 0],
                             [self.lcd_current_cr,  self.lcd_ion_cr,     self.lcd_raman_cr, self.lcd_3_cr,
-                             self.lcd_4_cr,        self.lcd_5_cr,       self.lcd_6_cr],
+                             self.lcd_4_cr,        self.lcd_5_cr,       self.lcd_6_cr,          0],
                             [self.lcd_current_s,   self.lcd_1_s,        self.lcd_2_s,      self.lcd_3_s,
-                             self.lcd_4_s,         self.lcd_cal_1_s,    self.lcd_cal_2_s]]
+                             self.lcd_4_s,         self.lcd_cal_1_s,    self.lcd_cal_2_s, self.lcd_ref_pos]] 
         # create motor_pos_matrix as df to facilitate the interaction with the positions/backup df
         # holds all the positions of the motors 
         #self.motor_pos_matrix = pd.DataFrame()
@@ -137,6 +142,10 @@ class Window(QMainWindow, Ui_MainWindow):
         # Set default motor(s) that is active initially:
         self.reset_active_motors()
         self.all_legs_setup()
+        
+        
+        
+        click = pyqtSignal(object)
 
     def set_speed_params(self, motor):
         global speed
@@ -212,6 +221,10 @@ class Window(QMainWindow, Ui_MainWindow):
         self.pushB_store_A.clicked.connect(lambda: self.store_pos(1))
         self.pushB_store_B.clicked.connect(lambda: self.store_pos(2))
         self.pushB_store_C.clicked.connect(lambda: self.store_pos(3))
+        self.pushB_store_D.clicked.connect(lambda: self.store_pos(4))
+        self.pushB_store_E.clicked.connect(lambda: self.store_pos(5))
+        self.pushB_store_F.clicked.connect(lambda: self.store_pos(6))
+        self.pushB_store_G.clicked.connect(lambda: self.store_pos(7))
         ## SAVE AND LOAD POSITIONS TO FILE BUTTONS ##
         self.pushB_savepos.clicked.connect(self.save_pos)
         self.pushB_loadpos.clicked.connect(self.load_pos)
@@ -222,6 +235,11 @@ class Window(QMainWindow, Ui_MainWindow):
         self.pushB_go_to_A.clicked.connect(lambda: self.goto(1))
         self.pushB_go_to_B.clicked.connect(lambda: self.goto(2))
         self.pushB_go_to_C.clicked.connect(lambda: self.goto(3))
+        self.pushB_go_to_D.clicked.connect(lambda: self.goto(4))
+        self.pushB_go_to_E.clicked.connect(lambda: self.goto(5))
+        self.pushB_go_to_F.clicked.connect(lambda: self.goto(6))
+        self.pushB_go_to_G.clicked.connect(lambda: self.goto(7))
+        
        
         ##  ABSOLUTE POSITION BUTTONS  ##
         self.dspinB_mm_axis_legs.valueChanged.connect(lambda: self.set_abs_pos(0))
@@ -229,6 +247,7 @@ class Window(QMainWindow, Ui_MainWindow):
         self.dspinB_deg_axis_pr.valueChanged.connect(lambda: self.set_abs_pos(2))
         self.dspinB_deg_axis_cr.valueChanged.connect(lambda: self.set_abs_pos(3))
         self.dspinB_mm_axis_s.valueChanged.connect(lambda: self.set_abs_pos(4))
+        self.dspinB_mpa_sample_p.valueChanged.connect(lambda: self.set_abs_pos(5))
 
         # move to abs position
         self.pushB_start_legs.clicked.connect(lambda: self.abs_pos(0))
@@ -236,6 +255,7 @@ class Window(QMainWindow, Ui_MainWindow):
         self.pushB_start_pr.clicked.connect(lambda: self.abs_pos(2))
         self.pushB_start_cr.clicked.connect(lambda: self.abs_pos(3))
         self.pushB_start_s.clicked.connect(lambda: self.abs_pos(4))
+        self.pushB_start_p.clicked.connect(lambda: self.abs_pos(5))
         
         ## HALT
         self.pushB_halt.clicked.connect(self.halt)
@@ -313,6 +333,16 @@ class Window(QMainWindow, Ui_MainWindow):
                 self.fine_step_right()
             if key_pressed == Qt.Key_D:
                 self.coarse_step_right()
+    
+    def mousePressEvent(self, event):
+        self.click.emit(self)
+        super.mousePressEvent(event)
+    
+def pos_chosen(lcd):
+    lcd.setStyleSheet(""" QLCDNumber {
+                                      border: 2px solid black;}""")
+    
+            
             
     ###   LCD TABLE FUNCTIONS   ###
     
@@ -362,9 +392,6 @@ class Window(QMainWindow, Ui_MainWindow):
             elif motor.name == 'S':
                 self.lcd_val[7][pos_idx] = self.lcd_val[7][0]
                 self.lcd_matrix[7][pos_idx].display(self.lcd_val[7][0])
-            # elif motor.name == 'Oil':
-            #     self.lcd_val[8][pos_idx] = self.lcd_val[8][0]
-            #     self.lcd_matrix[8][pos_idx].display(self.lcd_val[8][0])
 
 
 
@@ -380,9 +407,12 @@ class Window(QMainWindow, Ui_MainWindow):
             idx_list = [0, 1, 2, 3]
         if motor:
             idx_list = [motor_list.index(motor)]
+        # get position for all motors excluding P 
         for i in idx_list:
             self.lcd_val[i][0] = position[i]
             self.lcd_matrix[i][0].display(position[i])
+        # set correct position for P (only as internal variable in lcd_val)
+        # self.lcd_val[idx_list[-1]] #TODO: position for pressure motor only internal, shown value depends on p sensor
         ## Save positions to file
         if save: # TODO yields: segmentation fault due to termial display issues
             for i in range(8):
