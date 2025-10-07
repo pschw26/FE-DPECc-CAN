@@ -236,7 +236,10 @@ class MotorDriver:
                 self.acceleration = acceleration
                 self.node.sdo['Profile Acceleration 1'].raw = acceleration
         print("Motor " + self.name + ": Velocity mode")
-        self.node.sdo['Modes of Operation 1'].raw = 3
+        #self.node.sdo['Modes of Operation 1'].raw = 3
+        #self.node.sdo[0x6060].raw = 3
+        self.node.rpdo[2]['Modes of Operation 1'].raw = 3
+        self.node.rpdo[2].transmit()
         self.node.rpdo[4]['Target Velocity 1'].raw = velocity
         self.node.rpdo[4].transmit()
 
@@ -415,3 +418,101 @@ class AllMotorsDriver:
             else:
                 positions.append(0)
         return positions
+
+#-----------------------------------------------------------------------------
+
+class PGauge:
+    """
+    PGauge:
+        Methods for reading Pressure gauge values
+        
+    Use:
+        from canbus import PGauge
+        ...
+        pg = PGauge(net,config)
+        ...
+        pg.start()         - Starts P gauge values transmission
+        pg.stop()          - Stops P gauge values transmission
+        
+        pg.is_running()    [BOOLEAN]
+        pg.get_pvalue()    [INT]
+        ...
+        pg.end_pgauge()    - Ending the P gauge communication (mandatory!)
+    """
+ 
+    def __init__(self, net, conf):
+        self.net      = net
+        self.bus      = None
+        self.node     = conf.pgauge_params['node']
+        self.eds      = conf.pgauge_params['eds']
+        self.digit    = conf.pgauge_params['dec_digits']
+        self.offset   = conf.pgauge_params['offset']
+        self.type     = conf.pgauge_params['pdo_type']
+        self.timer    = conf.pgauge_params['pdo_timer']
+        self.active   = False
+        self.running  = False
+        self.pdo_id   = 0
+        
+        # Add node to network
+        self.pg = canopen.RemoteNode(self.node, self.eds)
+        net.add_node(self.pg)
+        print("P gauge assigned to node " + str(self.node) + 
+              " added to network ")
+        
+        # Can bus instance
+        self.bus = self.net.bus
+
+        # Is P gauge active?
+        try:
+            self.pg.sdo[0x1000].raw
+            self.active = True
+        except SdoCommunicationError:
+            self.active = False
+            print("No communication with P gauge!")
+
+        # Load SDO parameters
+        if self.active == True:
+            self.pg.sdo['Decimal digits PV'][1].raw      = self.digit
+            self.pg.sdo['Transmit PDO parameter'][2].raw = self.type
+            self.pg.sdo['Transmit PDO parameter'][5].raw = self.timer
+            self.pdo_id = self.pg.sdo[0x1800][1].raw
+        time.sleep(0.1)
+
+        def receive_PDO(self, data, timestamp):
+            b = data[:4] 
+            val = int.from_bytes(b, byteorder = 'little')
+            sign = data[3] & 0x80
+            if sign == 0x80:
+                val -= 4294967296
+            f = open("dummy", "w")
+            f.write(str(val))
+            f.close()
+
+        net.subscribe(self.pdo_id, receive_PDO)
+        
+    def is_active(self):
+        return self.active
+
+    def start(self):
+        self.pg.nmt.state = 'OPERATIONAL'
+        self.running  = True
+        print("PDO enabled")
+              
+    def stop(self):
+        self.pg.nmt.state = 'PRE-OPERATIONAL'
+        self.running = False
+        print("PDO disabled")
+           
+    def is_running(self):
+        return self.running
+    
+    def get_pvalue(self):
+        f = open("dummy","r")
+        val = f.read()
+        f.close()
+        val = int(val) + self.offset
+        return val
+
+    def end_pgauge(self):
+        self.net.unsubscribe(self.pdo_id)
+

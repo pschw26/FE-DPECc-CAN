@@ -1,0 +1,64 @@
+Connections:
+ethernet: cave: 01D09 - hut: 01D21
+D-SUB 9 see labels: 3IO and LIO
+Coax: Kay
+
+Pos Ende: PR: 70 
+Höhe: 190 = Beam
+
+Justirelaser montage bei großem Loch
+
+Justierlaser PEC ausrichtung
+- Fokussierung ca. 3m einstellen
+- hinter Zelle (langloch Blende)
+- Austritt Zelle (mm-papier Blende + mit Loch) => Spiegel um von Hinten sehen zu können
+
+Justage Kollimator über Reduzierblende
+
+Plan Ausrichting Beam:
+1. Cave-x-Laser AN, Leuchtschirm EIN
+2. MAEHP ausrichten so dass Justage Laser Punkt auf Cave-x-Laser passt
+3. Justage-Laser Schützen
+4. Beam AN, ausrichten auf x-Laser an MAEHP
+5. Leuchtschirm Ioannis ein, Positioin Beam+Laser speichern /Foto
+6. Justage-Laser Schutz weg
+7. MAEHP ausrichten so dass:
+	- Justage laser bleibt im x am MAEHP
+	- Justage Laser = Beam Position auf Ionnis Leuchtschirm (siehe 5.)
+	! c-rotation erfordert x-Kompensation 
+8. Laser Abbauen
+
+
+
+Justirelaser montage bei Ölanschluss, nur für Superhead - eigentlich nicht nötig, da klassische Justage mögloch.
+
+Justierlaser PEC ausrichtung
+- Fokussierung ca. 3m einstellen
+- hinter Zelle (langloch Blende)
+- Austritt Zelle (mm-papier Blende + mit Loch) => Spiegel um von Hinten sehen zu können
+
+Superhead mit kreispapier (mit Loch) bekleben
+lochmitte ausrichten auf Superhead-Laser
+
+Superhead position (X+Z) ausrichten auf Justirelaser 
+
+Vertikale Winkel:
+Kippung Superhead um SH-Laser auf Austritt Zelle (mm-papier Blende) zu treffen
+
+Horizontale Winkel:
+Rotation Zelle + Ausgleich durch durch X Achse Superhead bis beide laser auf beiden Austrittblenden mittig liegen.
+=> in Zukunft über Langlöcher?
+
+Si Spiegel innen an das Durchgangsloch, um 2. Absicherung zu haben
+- Umsetzung sollte fürs FE System angebracht werden. 
+
+__________________
+PRIOR STAGE X-Y-Z (Alignment 14.06.24)
+
+X: 7648 um
+Y: -15367 um
+Z: 292189.3 um
+
+PR: 0 / 89.99999453125
+
+
