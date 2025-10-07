@@ -14,20 +14,25 @@ Adapted to CAN bus on Mai 7 2024 by Eric Reusser
         - added connections for set_0 for legs and x (commented, see TODO)
         - added connections for halt (commented, see TODO)
         - changed print statement to "terminal" output in gui'''
+        
+        
+"""Q: 
+    - is position control for P-motor even necessary since value for operation 
+    (lcd or abs pos), depends solely on sensor val?"""
     
 
 import sys, time, threading
 
 from PyQt5.QtWidgets import QMainWindow, QApplication
 from PyQt5.QtGui import QKeyEvent, QFont
-from PyQt5.QtCore import Qt
+from PyQt5.QtCore import Qt, pyqtSignal
 from modules.gui.main_window_ui import Ui_MainWindow
 
 # import package for external file management 
 import pandas as pd 
 
 from modules.config import Config
-from modules.canbus import CanBus
+from modules.canbus import CanBus, PGauge
 from modules.motor  import AllMotors, MotorGroup
 
 
@@ -37,7 +42,10 @@ conf = Config('fedpecc.config')
 bus  = CanBus(conf.bus_params)
 net  = bus.connect()
 
+# init motors 
 all_motors  = AllMotors(net, conf)
+# init pressure sensor
+pg = PGauge(net,conf) # TODO:is working?!
 
 mot_msg = "Motors available & initialized: "
 for i in range(conf.global_params['number_of_motors']):
@@ -58,11 +66,11 @@ mode        = True
 direction   = True
 halt        = False
 speed       = 1.
-abs_pos     = [0., 0., 0., 0., 0.]  # Absolute target positions:
-                                    # legs, x, pr, cr, s
+abs_pos     = [0., 0., 0., 0., 0., 0.]  # Absolute target positions: #TODO: added pressure in this list
+                                    # legs, x, pr, cr, s, pressure
 
-# read position backup matrix from external file # TODO: make work 
-backup = pd.read_csv("/home/pi2mpp/Desktop/3105_HEIDELBERG/FE_DPECc/modules/gui/backup_positions", delimiter = '\t')
+# read position backup matrix from external file 
+backup = pd.read_csv("/home/pi2mpp/Desktop/04_08_25/FE_DPECc/modules/gui/backup_positions", delimiter = '\t')
 
 ### Setup GUI, handle all GUI widgets
 
@@ -80,8 +88,7 @@ class Window(QMainWindow, Ui_MainWindow):
 
         self.active_label_list = []
         # Values of positions in LCD display: shadow variable
-        self.lcd_val = [[0. for k in range(6)] for i in range(8)]
-
+        self.lcd_val = [[0. for j in range(8)] for i in range(8)]
         self.setupUi(self)
         self.setWindowTitle('FE_DPECc_GUI')
         self.setup_default_values()
@@ -94,7 +101,24 @@ class Window(QMainWindow, Ui_MainWindow):
         self.terminal.appendPlainText(mot_msg)
         all_motors.set_status('OPERATIONAL')
         self.terminal.appendPlainText("All motors OPERATIONAL")
+        
+        ### Turn on pressure sensor
+        pg.start() #TODO: working?!
+        if pg.is_running():
+            self.terminal.appendPlainText("Pressure sensor operating")
+            self.lcd_p.display(pg.get_pvalue()) 
 
+    
+        threading.Thread(target = self.update_p_lcd).start()
+        
+    def update_p_lcd(self):
+        if pg.is_running():
+            while True:
+                self.lcd_p.display(pg.get_pvalue()) 
+                time.sleep(1)
+                if self.function == self.closing:
+                    break
+    
     ### Setup defaults
     
     def setup_default_values(self):
@@ -109,39 +133,47 @@ class Window(QMainWindow, Ui_MainWindow):
         self.set_speed_params(motor_list[0])
         self.set_abs_pos_params(0, motor_list[0])
         self.set_abs_pos(0)
+        
+        
+        # set variable to en/disable pressure control
+        self.function = None
+        # dummy var for pressure sensor output (assume in [V])
+        self.pressure_sensor_val = 555 #TODO:dummy var 
+        # P-controler proportionality constant Kp
+        self.Kp = 1e-3
+        # scaling factor for abs_pos spinbox for pressure ([MPa] -> [mm])
+        self.scaling_oilp_to_mm = 1
+        
+        
         # Store lists for checkboxes and radioButtons:
         self.legs_boxlist = [self.checkB_zbr, self.checkB_zbc, self.checkB_zdr, self.checkB_zdc]
         self.legs_radioBlist = [self.radioB_all_motors, self.radioB_single_motor]
         # list of all labels:
         self.label_list = [self.label_zbr, self.label_zbc, self.label_zdr, self.label_zdc,
-                           self.label_x, self.label_pr, self.label_cr, self.label_s]
+                           self.label_x, self.label_pr, self.label_cr, self.label_s] 
         # list of all LCD`s:
-        self.lcd_matrix =  [[self.lcd_current_zbr, self.lcd_beam_zbr,   self.lcd_transport_zbr, 0, 0, 0],
-                            [self.lcd_current_zbc, self.lcd_beam_zbc,   self.lcd_transport_zbc, 0, 0, 0],
-                            [self.lcd_current_zdr, self.lcd_beam_zdr,   self.lcd_transport_zdr, 0, 0, 0],
-                            [self.lcd_current_zdc, self.lcd_beam_zdc,   self.lcd_transport_zdc, 0, 0, 0],
-                            [self.lcd_current_x,   self.lcd_working_x,  self.lcd_test_x,        0, 0, 0],
-                            [self.lcd_current_pr,  self.lcd_working_pr, self.lcd_test_pr,       0, 0, 0],
+        self.lcd_matrix =  [[self.lcd_current_zbr, self.lcd_beam_zbr,   self.lcd_transport_zbr, 0, 0, 0, 0, 0],
+                            [self.lcd_current_zbc, self.lcd_beam_zbc,   self.lcd_transport_zbc, 0, 0, 0, 0, 0],
+                            [self.lcd_current_zdr, self.lcd_beam_zdr,   self.lcd_transport_zdr, 0, 0, 0, 0, 0],
+                            [self.lcd_current_zdc, self.lcd_beam_zdc,   self.lcd_transport_zdc, 0, 0, 0, 0, 0],
+                            [self.lcd_current_x,   self.lcd_working_x,  self.lcd_test_x,        0, 0, 0, 0, 0],
+                            [self.lcd_current_pr,  self.lcd_working_pr, self.lcd_test_pr,       0, 0, 0, 0, 0],
                             [self.lcd_current_cr,  self.lcd_ion_cr,     self.lcd_raman_cr, self.lcd_3_cr,
-                             self.lcd_4_cr,        self.lcd_5_cr,       self.lcd_6_cr],
+                             self.lcd_4_cr,        self.lcd_5_cr,       self.lcd_6_cr,          0],
                             [self.lcd_current_s,   self.lcd_1_s,        self.lcd_2_s,      self.lcd_3_s,
-                             self.lcd_4_s,         self.lcd_cal_1_s,    self.lcd_cal_2_s]]
-        # create motor_pos_matrix as df to facilitate the interaction with the positions/backup df
-        # holds all the positions of the motors 
-        #self.motor_pos_matrix = pd.DataFrame()
-        # set up 0 matrix with up to 6 positions for every motor in motor_list  
-        for i in range(6):
-            pass
-            #self.motor_pos_matrix[f'position: {i}'] = [0 for i in range(len(motor_list))] 
+                             self.lcd_4_s,         self.lcd_cal_1_s,    self.lcd_cal_2_s, self.lcd_s_ref_pos]] 
 
         # Set default motor(s) that is active initially:
         self.reset_active_motors()
         self.all_legs_setup()
+        
 
     def set_speed_params(self, motor):
-        global speed
+        global speed, min_speed, max_speed
         velocity = motor.get_velocity_params()
         speed = velocity[0]
+        min_speed = velocity[1]
+        max_speed = velocity[2]
         print(velocity[0], velocity[1], velocity[2])
         self.dspinB_speed.setMinimum(velocity[1])
         self.dspinB_speed.setMaximum(velocity[2])
@@ -174,6 +206,7 @@ class Window(QMainWindow, Ui_MainWindow):
             self.dspinB_mm_axis_s.setMaximum(pos[2])
             self.dspinB_mm_axis_s.setSingleStep(pos[3])
             self.dspinB_mm_axis_s.setValue(pos[0])
+            
 
 
     def setup_default_buttons(self):
@@ -212,6 +245,10 @@ class Window(QMainWindow, Ui_MainWindow):
         self.pushB_store_A.clicked.connect(lambda: self.store_pos(1))
         self.pushB_store_B.clicked.connect(lambda: self.store_pos(2))
         self.pushB_store_C.clicked.connect(lambda: self.store_pos(3))
+        self.pushB_store_D.clicked.connect(lambda: self.store_pos(4))
+        self.pushB_store_E.clicked.connect(lambda: self.store_pos(5))
+        self.pushB_store_F.clicked.connect(lambda: self.store_pos(6))
+        self.pushB_store_G.clicked.connect(lambda: self.store_pos(7))
         ## SAVE AND LOAD POSITIONS TO FILE BUTTONS ##
         self.pushB_savepos.clicked.connect(self.save_pos)
         self.pushB_loadpos.clicked.connect(self.load_pos)
@@ -222,6 +259,11 @@ class Window(QMainWindow, Ui_MainWindow):
         self.pushB_go_to_A.clicked.connect(lambda: self.goto(1))
         self.pushB_go_to_B.clicked.connect(lambda: self.goto(2))
         self.pushB_go_to_C.clicked.connect(lambda: self.goto(3))
+        self.pushB_go_to_D.clicked.connect(lambda: self.goto(4))
+        self.pushB_go_to_E.clicked.connect(lambda: self.goto(5))
+        self.pushB_go_to_F.clicked.connect(lambda: self.goto(6))
+        self.pushB_go_to_G.clicked.connect(lambda: self.goto(7))
+        
        
         ##  ABSOLUTE POSITION BUTTONS  ##
         self.dspinB_mm_axis_legs.valueChanged.connect(lambda: self.set_abs_pos(0))
@@ -229,6 +271,7 @@ class Window(QMainWindow, Ui_MainWindow):
         self.dspinB_deg_axis_pr.valueChanged.connect(lambda: self.set_abs_pos(2))
         self.dspinB_deg_axis_cr.valueChanged.connect(lambda: self.set_abs_pos(3))
         self.dspinB_mm_axis_s.valueChanged.connect(lambda: self.set_abs_pos(4))
+        self.dspinB_sample_p.valueChanged.connect(lambda: self.set_abs_pos(5))
 
         # move to abs position
         self.pushB_start_legs.clicked.connect(lambda: self.abs_pos(0))
@@ -236,6 +279,7 @@ class Window(QMainWindow, Ui_MainWindow):
         self.pushB_start_pr.clicked.connect(lambda: self.abs_pos(2))
         self.pushB_start_cr.clicked.connect(lambda: self.abs_pos(3))
         self.pushB_start_s.clicked.connect(lambda: self.abs_pos(4))
+        self.pushB_start_p.clicked.connect(lambda: self.abs_pos(5))
         
         ## HALT
         self.pushB_halt.clicked.connect(self.halt)
@@ -313,6 +357,7 @@ class Window(QMainWindow, Ui_MainWindow):
                 self.fine_step_right()
             if key_pressed == Qt.Key_D:
                 self.coarse_step_right()
+    
             
     ###   LCD TABLE FUNCTIONS   ###
     
@@ -362,11 +407,6 @@ class Window(QMainWindow, Ui_MainWindow):
             elif motor.name == 'S':
                 self.lcd_val[7][pos_idx] = self.lcd_val[7][0]
                 self.lcd_matrix[7][pos_idx].display(self.lcd_val[7][0])
-            # elif motor.name == 'Oil':
-            #     self.lcd_val[8][pos_idx] = self.lcd_val[8][0]
-            #     self.lcd_matrix[8][pos_idx].display(self.lcd_val[8][0])
-
-
 
     def refresh_lcd_displays(self, save):
         '''Update the status LCDs.'''
@@ -378,17 +418,20 @@ class Window(QMainWindow, Ui_MainWindow):
         idx_list = []
         if motor_group:
             idx_list = [0, 1, 2, 3]
-        if motor:
+        if motor and not motor.name == 'P':
             idx_list = [motor_list.index(motor)]
+        # show current position for all motors except P and pressure for P
         for i in idx_list:
             self.lcd_val[i][0] = position[i]
             self.lcd_matrix[i][0].display(position[i])
-        ## Save positions to file
+        #self.lcd_p.display(pg.get_pvalue()) #TODO: dummy var 
+        # Save positions to file
         if save: # TODO yields: segmentation fault due to termial display issues
             for i in range(8):
                 backup.iloc[i] = self.lcd_val[i]
-            backup.to_csv('/home/pi2mpp/Desktop/3105_HEIDELBERG/FE_DPECc/modules/gui/backup_positions', sep='\t', index= False)
+            backup.to_csv('/home/pi2mpp/Desktop/04_08_25/FE_DPECc/modules/gui/backup_positions', sep='\t', index= False)
             # self.terminal.appendPlainText('conducted position backup to file!')
+            
             
     ###   CHECKABILITY   ###
  
@@ -508,8 +551,8 @@ class Window(QMainWindow, Ui_MainWindow):
         if select == 6:
             motor = motor_list[8]
             motor_group = None 
-            # self.active_label_list = [self.label_oil]
             self.set_speed_params(motor)
+            self.set_abs_pos(5)
             self.terminal.appendPlainText('Motor Pressure selected')
         for label in self.active_label_list:
             label.setFont(QFont('Arial', 20, weight=QFont.Bold))
@@ -518,21 +561,71 @@ class Window(QMainWindow, Ui_MainWindow):
     ### MOVEMENT CONTROL
     
     def wait_end_rotation(self):
-        global halt, mode, autosave
+        global halt, mode, autosave, abs_pos, speed, min_speed, max_speed
         for label in self.active_label_list:    
             label.setStyleSheet('color: red')
         cnt = 0
         if motor:
             print("Thread started")
+            dist_old = 0
             while motor.is_rotating():
+                
+                
+                # P-controller option for pressure control
+                if motor.name == 'P': 
+                    self.tabWidget.tabBar().setTabTextColor(5, Qt.red)
+                    # if self.function == self.abs_pos:
+                    #     dist = abs_pos[5] - self.pressure_sensor_val * self.scaling_oilp_to_mm #TODO: dummy var / get this scaling factor
+                    
+                    #     # scaling sensor output: oilp -> mm
+                    #     # assumption:
+                    #     # - turning right (direction == True) -> total step number rises -> pressure rises (dist > 0) 
+                    #     # - turning left (direction == False) -> total step number decreases -> pressure decreases(dist < 0) 
+                    
+                    #     diff_dist = dist_old - dist
+                    #     if dist > 0:
+                    #         if cnt == 0:
+                    #             # cap the velocity update at max and min velocity
+                    #             vel = max(min_speed, min(speed + self.Kp*dist, max_speed))
+                    #             motor.move_position(abs_pos[5], vel)
+                    #         elif cnt > 0 and diff_dist > 0:
+                    #             # cap the velocity update at max and min velocity
+                    #             vel = max(min_speed, min(speed + self.Kp*dist, max_speed))
+                    #             motor.move_position(abs_pos[5], vel)
+                    #         elif cnt > 0 and diff_dist < 0: 
+                    #             self.terminal.appendPlainText('pressure is decreasing instead of increasing!')
+                    #             motor.move_halt()
+                    #             break
+                    #     elif dist < 0:
+                    #         if cnt == 0:
+                    #             # cap the velocity update at max and min velocity
+                    #             vel = max(min_speed, min(speed - self.Kp*dist, max_speed))
+                    #             motor.move_position(abs_pos[5], -vel)
+                    #         elif cnt > 0 and diff_dist < 0:
+                    #             # cap the velocity update at max and min velocity
+                    #             vel = max(min_speed, min(speed - self.Kp*dist, max_speed))
+                    #             motor.move_position(abs_pos[5], -vel)
+                    #         elif cnt > 0 and diff_dist > 0:
+                    #             self.terminal.appendPlainText('pressure is increasing instead of decreasing!')
+                    #             motor.move_halt()
+                    #             break
+                    #     dist_old = dist
+                        
+                        
+
                 time.sleep(heartbeat)
                 cnt += 1
+                # if cnt%autosave == 0:
+                #     self.refresh_lcd_displays(True)
+                # else:
+                #     self.refresh_lcd_displays(False)
                 if cnt == autosave:
                     self.refresh_lcd_displays(True)
                     cnt = 0
                 else:
                     self.refresh_lcd_displays(False)
             self.refresh_lcd_displays(True)
+            self.tabWidget.tabBar().setTabTextColor(5, Qt.black)
         elif motor_group:
             print("Thread started")
             while motor_group.is_rotating():
@@ -606,9 +699,12 @@ class Window(QMainWindow, Ui_MainWindow):
             abs_pos[3] = self.dspinB_deg_axis_cr.value()
         elif  index == 4:
             abs_pos[4] = self.dspinB_mm_axis_s.value()
+        elif index == 5:
+            abs_pos[5] = self.dspinB_sample_p.value()*self.scaling_oilp_to_mm #TODO: get this scaling factor
     
     def abs_pos(self, index):
         global abs_pos, speed, mode
+        self.function = self.abs_pos
         mode = True
         if index == 0:
             if motor_group and motor_group.is_active():
@@ -624,6 +720,7 @@ class Window(QMainWindow, Ui_MainWindow):
 
     def halt(self):
         global mode, halt
+        self.function = None
         if not mode:
             self.stop_motor()
             return
@@ -637,6 +734,7 @@ class Window(QMainWindow, Ui_MainWindow):
         
     def fine_step_right(self):
         global motor, motor_group, mode
+        self.function = None
         mode = True
         step = self.dspinB_fine.value()
         if motor and motor.is_active():
@@ -647,6 +745,7 @@ class Window(QMainWindow, Ui_MainWindow):
         
     def coarse_step_right(self):
         global motor, motor_group, mode
+        self.function = None
         mode = True
         step = self.dspinB_coarse.value()
         if motor and motor.is_active():
@@ -657,6 +756,7 @@ class Window(QMainWindow, Ui_MainWindow):
         
     def fine_step_left(self):
         global motor, motor_group, mode
+        self.function = None
         mode = True
         step = self.dspinB_fine.value()
         if motor and motor.is_active():
@@ -667,6 +767,7 @@ class Window(QMainWindow, Ui_MainWindow):
         
     def coarse_step_left(self):
         global motor, motor_group, mode
+        self.function = None
         mode = True
         step = self.dspinB_coarse.value()
         if motor and motor.is_active():
@@ -679,6 +780,7 @@ class Window(QMainWindow, Ui_MainWindow):
     
     def stop_motor(self):
         global motor, mode
+        self.function = None
         for label in self.active_label_list:    
             label.setStyleSheet('color: yellow')
         if not mode:
@@ -690,6 +792,7 @@ class Window(QMainWindow, Ui_MainWindow):
 
     def permanent_right(self):
         global motor, motor_group, mode, direction
+        self.function = None
         if self.radioB_permanent_when_pushed.isChecked() == True:
             mode       = False
             direction  = True
@@ -699,6 +802,7 @@ class Window(QMainWindow, Ui_MainWindow):
 
     def permanent_left(self):
         global motor, mode, direction
+        self.function = None
         if self.radioB_permanent_when_pushed.isChecked() == True:
             mode       = False
             direction  = False
@@ -727,13 +831,13 @@ class Window(QMainWindow, Ui_MainWindow):
     def save_pos(self):           
         # save all positions for all to file 
         positions = pd.DataFrame(self.lcd_val)
-        positions.to_csv('/home/pi2mpp/Desktop/3105_HEIDELBERG/FE_DPECc/modules/gui/saved_positions', sep='\t', index=False)
+        positions.to_csv('/home/pi2mpp/Desktop/04_08_25/FE_DPECc/modules/gui/saved_positions', sep='\t', index=False)
         self.terminal.appendPlainText('saved positions of all motors to file!')
     
     def load_pos(self):             
         # load positions from file, then refresh lcd's
-        positions = pd.read_csv('/home/pi2mpp/Desktop/3105_HEIDELBERG/FE_DPECc/modules/gui/saved_positions', delimiter = '\t')
-        for i in range(8):
+        positions = pd.read_csv('/home/pi2mpp/Desktop/04_08_25/FE_DPECc/modules/gui/saved_positions', delimiter = '\t')
+        for i in range(8): 
             for j in range(6):
                 self.lcd_val[i][j] = positions.iloc[i][j]
                 try: 
@@ -771,8 +875,8 @@ class Window(QMainWindow, Ui_MainWindow):
     # def update_pos(self, pos_idx):
     #     '''Update module positions from lcd_matrix values.'''
     #     #for module in module_list:
-    #     #TODO: when connected motors are changed
-    #     #TODO: store module_positions as msteps, not in real units
+    #     # when connected motors are changed
+    #     # store module_positions as msteps, not in real units
     #     # if module.motor == module_zbr.motor:
     #     #     module.module_positions[pos_idx] = int(self.lcd_matrix[0][pos_idx].value())
     #     # elif module.motor == module_zbc.motor:
@@ -794,8 +898,11 @@ class Window(QMainWindow, Ui_MainWindow):
             
     def closing(self):
         global all_motors
+        self.function = self.closing
         ### Turn all motors OFF
         all_motors.set_status('PRE-OPERATIONAL')
+        ### Turn of pressure sensor and set preoperational #TODO: is working?!
+        pg.stop()
         net.disconnect()
         print("Can bus: Disconnected")
         self.close()

@@ -1,7 +1,0 @@
-EMO ON  crashes GUI -> dont crash + warn that EMO is ON
-
-driving after load posisition (PR) starts from 0 and not from loaded posisiton (GUI shows loaded pos initially, thonnu log not)
-
-
-10.09.2024
-Software crashd after execute z-axis. GUI closed, axis continue moving, reset RPI/motors solved the problem.

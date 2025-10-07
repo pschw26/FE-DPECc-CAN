@@ -19,3 +19,4 @@ if __name__ == "__main__":
         app = run_app()
     except Exception:
         print('ERROR')
+        traceback.print_exc()

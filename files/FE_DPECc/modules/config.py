@@ -21,6 +21,7 @@ class Config:
         c.bus_params           [dictionary]
         c.sdo                  [list]
         c.motor_params         [list of dictionaries]
+        c.pgauge_params        [dictionary]
     """
     
     def __init__(self, filename):
@@ -30,6 +31,7 @@ class Config:
         self.bus_params = {}
         self.sdo = []
         self.motor_params = []
+        self.pgauge_params = {}
 
             
         def extract(line):
@@ -80,5 +82,7 @@ class Config:
         for i in range(n):
             self.headers.append(header(f))
             self.motor_params.append(conf_dict(f))
+        self.headers.append(header(f))
+        self.pgauge_params = conf_dict(f)        
         f.close()
         print("Configuration processed")
